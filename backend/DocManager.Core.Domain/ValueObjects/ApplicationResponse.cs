@@ -13,14 +13,14 @@ public class ApplicationResponse<T>
     public string Status { get; }
     
     
-    private ApplicationResponse(bool success, T? data)
+    internal ApplicationResponse(bool success, T? data)
     {
         Success = success;
         Data = data;
         Status = "OK";
     }
     
-    private ApplicationResponse(string status, string error, string[]? errorDetails = null)
+    internal ApplicationResponse(string status, string error, string[]? errorDetails = null)
     {
         Error = error;
         ErrorDetails = errorDetails;
@@ -36,7 +36,22 @@ public class ApplicationResponse<T>
         return $"ERROR: [{Status}] => {typeof(T).Name}:{Error}" +
                $"\n{string.Join("\n", ErrorDetails ?? Array.Empty<string>())}";
     }
+}
 
-    public static ApplicationResponse<T> Succeed(T? data = default) => new ApplicationResponse<T>(true, data);
-    public static ApplicationResponse<T> Fail(string status, string error, string[]? errorDetails = null) => new ApplicationResponse<T>(status, error, errorDetails);
+public class ApplicationResponse : ApplicationResponse<bool>
+{
+    protected ApplicationResponse(bool success) : base(success, success)
+    {
+    }
+
+    protected ApplicationResponse(string status, string error, string[]? errorDetails = null) : base(status, error, errorDetails)
+    {
+    }
+
+
+    public static ApplicationResponse<T> Succeed<T>(T? data = default) => new ApplicationResponse<T>(true, data);
+    public static ApplicationResponse Succeed() => new ApplicationResponse(true);
+    public static ApplicationResponse<T> Fail<T>(string status, string error, string[]? errorDetails = null) => new ApplicationResponse<T>(status, error, errorDetails);
+    public static ApplicationResponse Fail(string status, string error, string[]? errorDetails = null) => new ApplicationResponse(status, error, errorDetails);
+
 }

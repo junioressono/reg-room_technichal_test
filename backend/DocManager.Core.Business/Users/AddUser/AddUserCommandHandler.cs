@@ -15,21 +15,14 @@ public class AddUserCommandHandler: IRequestHandler<AddUserRequest, ApplicationR
     
     public async Task<ApplicationResponse<AddUserResponse>> Handle(AddUserRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            if (request is null)
-                throw new ArgumentNullException(nameof(request));
-            if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
-                throw new ArgumentNullException(nameof(request), "Username and Password are mandatory");
+        if (request is null)
+            throw new ArgumentNullException(nameof(request));
+        if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
+            throw new ArgumentNullException(nameof(request), "Username and Password are mandatory");
 
-            var user = await _userRepository.CreateUserAsync(request.Username, request.Password, request.IsAdmin,
-                cancellationToken);
-            return ApplicationResponse<AddUserResponse>.Succeed(new AddUserResponse(user.Username, user.CreatedAt));
-        }
-        catch (Exception e)
-        {
-            return ApplicationResponse<AddUserResponse>.Fail("UnknownError", e.Message);
-        }
+        var user = await _userRepository.CreateUserAsync(request.Username, request.Password, request.IsAdmin,
+            cancellationToken);
+        return ApplicationResponse.Succeed(new AddUserResponse(user.Username, user.CreatedAt));
     }
     
 }
