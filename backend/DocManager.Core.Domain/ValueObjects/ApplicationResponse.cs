@@ -3,9 +3,9 @@ namespace DocManager.Core.Domain.ValueObjects;
 public class ApplicationResponse<T>
 {
 
-    public string[] ErrorDetails { get; }
+    public string[]? ErrorDetails { get; }
 
-    public string Error { get; }
+    public string? Error { get; }
 
     public T? Data { get; }
 
@@ -20,7 +20,7 @@ public class ApplicationResponse<T>
         Status = "OK";
     }
     
-    private ApplicationResponse(string status, string error, string[] errorDetails)
+    private ApplicationResponse(string status, string error, string[]? errorDetails = null)
     {
         Error = error;
         ErrorDetails = errorDetails;
@@ -34,9 +34,9 @@ public class ApplicationResponse<T>
             return $"[{Status}] => {typeof(T).Name}";
         }
         return $"ERROR: [{Status}] => {typeof(T).Name}:{Error}" +
-               $"\n{string.Join("\n", ErrorDetails)}";
+               $"\n{string.Join("\n", ErrorDetails ?? Array.Empty<string>())}";
     }
 
     public static ApplicationResponse<T> Succeed(T? data = default) => new ApplicationResponse<T>(true, data);
-    public static ApplicationResponse<T> Fail(string status, string error, string[] errorDetails) => new ApplicationResponse<T>(status, error, errorDetails);
+    public static ApplicationResponse<T> Fail(string status, string error, string[]? errorDetails = null) => new ApplicationResponse<T>(status, error, errorDetails);
 }
