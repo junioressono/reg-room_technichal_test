@@ -6,5 +6,6 @@ public interface IUserRepository
 {
     Task<User> CreateUserAsync(string username, string password, bool isAdmin, CancellationToken cancellationToken = default);
     Task<User> GetUserAsync(string username, string password, CancellationToken cancellationToken = default);
-    Task DeleteUserAsync(Guid Id, CancellationToken cancellationToken = default);
+    Task<IList<User>> GetUsersAsync(CancellationToken cancellationToken = default);
+    Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default);
 }
